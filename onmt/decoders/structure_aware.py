@@ -100,20 +100,26 @@ class StructureAwareDecoder(RNNDecoderBase):
             - convert it to a tuple if it's not and decoder_rnn is LSTM
             - Duplicate it to mimick a multi-layer encoder
         """
+        num_directions, batch_size, hidden_size = encoder_final[0].shape
+        if self.bidirectional_encoder: assert num_directions
+        
+        def _fix_enc_hidden(hidden):
+            # The encoder hidden is  directions x batch x dim.
+            # We need to convert it to 1 x batch x (directions*dim).
+            if self.bidirectional_encoder:
+                hidden = torch.cat([hidden[0:hidden.size(0):2],
+                                    hidden[1:hidden.size(0):2]], 2)
+            return hidden
 
-        if isinstance(encoder_final, tuple):
-            if self.rnn_type == "LSTM":
-                hidden = (
-                    encoder_final[0].repeat(self.num_layers, 1, 1),
-                    encoder_final[1].repeat(self.num_layers, 1, 1)
-                )
-            else:
-                logger.info('Final encoder state is a tuple but decoder is not '
-                            'LSTM. Using only hidden[0] for state init.')
-                hidden = (encoder_final[0].repeat(self.num_layers, 1, 1), )
+        if self.rnn_type == "LSTM":
+            hidden = (
+                _fix_enc_hidden(encoder_final[0]).repeat(self.num_layers, 1, 1),
+                _fix_enc_hidden(encoder_final[1]).repeat(self.num_layers, 1, 1)
+            )
         else:
-            hidden = encoder_final.repeat(self.num_layers, 1, 1)
-            hidden = (hidden, hidden) if self.rnn_type == "LSTM" else (hidden, )
+            logger.info('Final encoder state is a tuple but decoder is not '
+                        'LSTM. Using only hidden[0] for state init.')
+            hidden = (_fix_enc_hidden(encoder_final[0]).repeat(self.num_layers, 1, 1), )
 
         self.state["hidden"] = hidden
 
