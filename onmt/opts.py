@@ -78,6 +78,8 @@ def model_opts(parser):
               help="Type of decoder layer to use. Non-RNN layers "
                    "are experimental. Options are "
                    "[rnn|transformer|cnn].")
+    group.add('--bidirectional_encoder', '-bidirectional_encoder',
+              action="store_true", help='RNNs can be bidirectional')
 
     group.add('--layers', '-layers', type=int, default=-1,
               help='Number of layers in enc/dec.')
