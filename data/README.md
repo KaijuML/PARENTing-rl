@@ -35,5 +35,5 @@ rm -rf wikipedia-biography-dataset
 create the dataset:
 
 ```
-python create-dataset --dataset wikibio
+python create-dataset.py --dataset wikibio
 ```
