@@ -6,15 +6,16 @@ import os
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Create an experiment folder")
+    parser.add_argument('--dataset', dest='dataset', required=True)
     parser.add_argument('--name', dest='name', required=True)
     
     args = parser.parse_args()
     
-    folder = pkg_resources.resource_filename(__name__, 'experiments')
+    folder = pkg_resources.resource_filename(__name__, 'experiments', args.dataset)
     
     if not os.path.exists(folder):
-        print("Creating a folder 'experiments/' where all experiments will be stored.")
-        os.mkdir(folder)
+        print(f"Creating a folder 'experiments/{args.dataset}' where all experiments will be stored.")
+        os.makedirs(folder)
     
     folder = os.path.join(folder, args.name)
     

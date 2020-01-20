@@ -6,7 +6,7 @@ You will need a recent python (3.6+) to use it as is, especially OpenNMT.
 
 Beyond standard packages included in miniconda, usefull packages are torch==1.1.0 torchtext==0.4 and some others required to make onmt work (PyYAML and configargparse for example).
 
-In the following, only instructions for WikiBIO are given. However, most of the time, changing "wikibio" to "webnlg" in the given command will work. Where instructions differ, I'll give both commands.
+In the following, only instructions for WikiBIO are given. However, most of the time, changing "wikibio" to "webnlg" in the given command will work. Where instructions differ, I'll give both commands. In the paper we report experiments on several model. Here we give instructions for Structure-Aware seq2seq (our own implementation in pytorhc) from [this great repo](https://github.com/tyliupku/wiki2bio/blob/master/preprocess.py). Modifying instructions to work with others models is intuitive.
 
 # Datasets
 
@@ -32,9 +32,12 @@ Once datasets are downloaded and formated, your repository should look like this
 
 # Experiments
 
-Before any code run, we build an experiment folder to keep things contained
+Before any code run, we build experiment folders to keep things contained
 
-`python create-experiment.py --name wiki-exp`
+```
+python create-experiment.py --dataset --name pretraining-sarnn
+python create-experiment.py --dataset --name sarnn-rl
+```
 
 At this stage, your repository should look like this:
 
@@ -42,10 +45,11 @@ At this stage, your repository should look like this:
 .
 ├── onmt/		             	# Most of the heavy-lifting is done by onmt
 ├── experiments/ 	           	# Experiments are stored here
-│	└── wikibio-exp/
-│	│	├── data/
-|	│	├── gens/
-│	│	└── models/
+│	└── wikibio/
+│	│   └── pretraining-sarnn/
+│	│	│	├── data/
+|	│	│	├── gens/
+│	│	│	└── models/
 ├── data/						# Dataset is here
 └── ...
 ```
@@ -61,14 +65,15 @@ At this stage, your repository should look like this:
 ```
 ├── onmt		             	# Most of the heavy-lifting is done by onmt
 ├── experiments 	           	# Experiments are stored here
-│	└── wikibio-exp
-│	│	├── data
-│	│	│	├── data.train.0.pt
-│	│	│	├── data.valid.0.pt
-│	│	│	├── data.vocab.pt
-│	│	│	├── preprocess-log.txt
-├	│	├── gens
-│	│	└── models
+│	└── wikibio/
+│	│   └── pretraining-sarnn/
+│	│	│	├── data/
+│	│	│	│	├── data.train.0.pt
+│	│	│	│	├── data.valid.0.pt
+│	│	│	│	├── data.vocab.pt
+│	│	│	│	├── preprocess-log.txt
+├	│	│	├── gens/
+│	│	│	└── models/
 ├── data						# Dataset is here
 └── ...
 ```
@@ -77,7 +82,7 @@ At this stage, your repository should look like this:
 
 To train a model within the PARENTing framework, you first need to pretain the model:
 
-`python train.py --config pretrain_wikibio.cfg`
+`python train.py --config pretrain_wikibio_sarnn.cfg`
 
 To PARENT a model within our RL framework, you can run:
 
@@ -87,7 +92,9 @@ To (pre)train with different parameters than the one used in the paper, please r
 
 This config files run the training for 100 000 steps, however we manually stop the training before, depending on performance on development set.
 
-# Translating
+Please not that all pretraining/training config file refer to data preprocessed by onmt and place in wikibio/pretraining_sarrn experiemnt. This is to reduce redunduncies because the preprocessing step is the same for all models. 
+
+# Translating [WIP]
 
 You can simply translate the test input by running:
 
