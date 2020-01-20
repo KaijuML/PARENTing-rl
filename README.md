@@ -100,5 +100,9 @@ You can simply translate the test input by running:
 
 `python translate.py --config translate.cfg`
 
+If you wish to make multiple translate in a row (for exemple to find the best performing checkpoint) you can you the `batch_translate.py` helper:
+
+`python batch_translate --config translate.cfg --dataset wikibio --setname test --bsz 64 --bms 10 --blk 0 --gpu 1`
+
 # Evaluation [WIP]
 
