@@ -26,11 +26,11 @@ def strposint(value):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', '-d' dest='dataset', default='wikibio',
+    parser.add_argument('--dataset', '-d', dest='dataset', default='wikibio',
                         choices=['wikibio', 'webnlg'])
     parser.add_argument('--setname', dest='setname', default='test',
                         choices=['set', 'dev'])
-    parser.add_argument('--experiment', '-e' dest='experiment', 
+    parser.add_argument('--experiment', '-e', dest='experiment', 
                         default='wikibio-exp')
     parser.add_argument('--start-step', dest='start_step', default=0, type=posint)
     parser.add_argument('--step-size', dest='step_size', default=1, type=strposint)
@@ -54,7 +54,7 @@ if __name__ == "__main__":
         return int("".join(re.findall("([0-9]+?)[.]pt", fname)))
     
     models = [fname for fname in os.listdir(mdl_dir)]
-    src = os.path.join('data', args.dataset, 'processed_data', f'{args.setname}_input.txt')
+    src = os.path.join('data', args.dataset, f'{args.setname}_input.txt')
     
     n_processed = -1
     for idx, fname in enumerate(models):
