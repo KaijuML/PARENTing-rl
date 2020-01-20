@@ -29,9 +29,9 @@ if __name__ == "__main__":
     parser.add_argument('--dataset', '-d', dest='dataset', default='wikibio',
                         choices=['wikibio', 'webnlg'])
     parser.add_argument('--setname', dest='setname', default='test',
-                        choices=['set', 'dev'])
+                        choices=['test', 'dev'])
     parser.add_argument('--experiment', '-e', dest='experiment', 
-                        default='wikibio-exp')
+                        default='pretraining-sarnn')
     parser.add_argument('--start-step', dest='start_step', default=0, type=posint)
     parser.add_argument('--step-size', dest='step_size', default=1, type=strposint)
     parser.add_argument('--bms', dest='bms', default=1, type=strposint,
@@ -47,13 +47,15 @@ if __name__ == "__main__":
     print(f"Batch translating models from experiment {args.experiment}")
     
     exp_dir = os.path.join('experiments', args.dataset, args.experiment)
-    mdl_dir = os.path.join(exp_dir, 'model')
+    mdl_dir = os.path.join(exp_dir, 'models')
     gns_dir = os.path.join(exp_dir, 'gens', args.setname)
     
     def get_step(fname):
         return int("".join(re.findall("([0-9]+?)[.]pt", fname)))
     
     models = [fname for fname in os.listdir(mdl_dir)]
+    models = sorted(models, key=get_step, reverse=False)
+
     src = os.path.join('data', args.dataset, f'{args.setname}_input.txt')
     
     n_processed = -1
@@ -74,7 +76,7 @@ if __name__ == "__main__":
             f'-model {model}',
             f'-src {src}',
             f'-output {output}',
-            f'-bean_size {args.bms}',
+            f'-beam_size {args.bms}',
             f'-block_ngram_repeat {args.blk}',
             f'-batch_size {args.bsz}',
             f'-gpu {args.gpu}',
