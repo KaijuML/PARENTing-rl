@@ -1,3 +1,5 @@
+from make_parent_training_stats import main as make_training_stats
+
 import pkg_resources
 import re, time, os
 import itertools
@@ -249,6 +251,12 @@ def preprocess(folder):
     create_tables(folder)
     duration = time.time() - time_start
     print(f"formatting finished in {duration:.3f} seconds")
+    
+    print("Computing PARENT training stats for RL training ...")
+    time_start = time.time()
+    make_training_stats('wikibio')
+    duration = time.time() - time_start
+    print(f"Stats computed in {duration:.3f} seconds")
 
 
 def make_dirs(folder):
