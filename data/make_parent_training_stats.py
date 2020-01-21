@@ -53,7 +53,7 @@ def serialize_stats(tv, rnc, rnw):
     return tv, rnc, rnw
 
 
-def main(dataset)
+def main(dataset):
     references = load_refs(dataset, setname='train')
     tables = load_refs(dataset, setname='train')
     
