@@ -8,11 +8,9 @@ import os
 
 
 def load_tables(dataset, setname):
-    
     tables_filename = os.path.join("data", dataset, f"{setname}_tables.jl")
     with open(tables_filename, encoding="utf8", mode="r") as tables_file:
         tables = [json.loads(line) for line in tables_file]
-        
     return tables
 
 def load_refs(dataset, setname):
@@ -20,7 +18,6 @@ def load_refs(dataset, setname):
     with open(refs_filename, encoding="utf8", mode="r") as refs_file:
         refs = [[line.strip().split(" ")]
                 for line in refs_file if line.strip()]
-        
     return refs
 
 
