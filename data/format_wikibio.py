@@ -171,7 +171,50 @@ def extract_first_sentence(folder):
         with open(output_filename, mode='w', encoding='utf8') as f:
             for idx in indices:
                 f.write(sent[idx] + '\n')
-
+                
+                
+def create_tables(folder):
+    """Here we create the tables.jl files used in PARENT metric
+    We could optimize the code so that step is done in create_input
+    but it's easier and more convienient to just add it there.
+    """
+    
+    DELIM = u"￨"  # delim used by onmt
+    
+    for setname in ['train', 'valid', 'test']:
+        input_filename = os.path.join(folder, f"{setname}_input.txt")
+        with open(input_filename, mode="r", encoding="utf8") as f:
+            # each line is a table. Each token is a value in the table.
+            # We take the value/label of the token and discard the pos
+            # given that they are written in the right order
+            
+            allvals = list()
+            alllabs = list()
+            
+            for line in f:
+                vals = list()
+                labs = list()
+                for token in line.strip().split():
+                    val, lab, _, __ = token.split(DELIM)
+                    vals.append(val)
+                    labs.append(lab)
+                allvals.append(vals)
+                alllabs.append(labs)
+                
+            tables = list()
+            for idx, (labs, vals) in enumerate(zip(allvals, alllabs)):
+                table = list()
+                for key, group in itertools.groupby(labs):
+                    size = len([_ for _ in group])
+                    vvals, vals = vals[:size], vals[size:]
+                    table.append((key, vvals))
+            
+                assert len(vals) == 0  # we exhausted all tokens
+                tables.append(table)
+                
+        output_filename = os.path.join(folder, f"{setname}_tables.jl")
+        with open(output_filename, mode="w", encoding="utf8") as f:
+            for table in tables: f.write(json.dumps(table) + '\n')
 
 def preprocess(folder):
     """
@@ -198,6 +241,12 @@ def preprocess(folder):
     extract_first_sentence(folder)
     duration = time.time() - time_start
     print(f"extract finished in {duration:.3f} seconds")
+    
+    print("formatting input for PARENT metric ...")
+    time_start = time.time()
+    create_tables(folder)
+    duration = time.time() - time_start
+    print(f"formatting finished in {duration:.3f} seconds")
 
 
 def make_dirs(folder):
@@ -213,5 +262,6 @@ def main():
     make_dirs(folder)
     preprocess(folder)
 
+    
 if __name__ == '__main__':
     main()
