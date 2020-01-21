@@ -60,15 +60,17 @@ if __name__ == "__main__":
     
     n_processed = -1
     for idx, fname in enumerate(models):
+        step = get_step(fname)
+        
         n_processed += 1
-        if n_processed % args.step_size:
+        if n_processed % args.step_size or step < args.start_step:
             print(f"Skipping step {step}")
             continue
             
         print(idx, "translating", fname)
         
         model = os.path.join(mdl_dir, fname)
-        output_pfx = f'bms{args.bms}.blk{args.blk}.bsz{args.bsz}-step_{get_step(fname)}'
+        output_pfx = f'bms{args.bms}.blk{args.blk}.bsz{args.bsz}-step_{step}'
         output = os.path.join(gns_dir, f'{output_pfx}.txt')
         log_file = os.path.join(exp_dir, 'translate-log.txt')
         
