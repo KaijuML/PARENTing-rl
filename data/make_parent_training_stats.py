@@ -7,6 +7,7 @@ PARENT metric. For evaluation, continue to use the original implementation!
 
 import itertools, collections, json
 import argparse
+import os
 
 
 def nwise(iterable, n):
@@ -28,16 +29,16 @@ def overlap_probability(ngram, table_values):
 
 
 def load_tables(dataset, setname):
-    tables_filename = os.path.join("data", dataset, f"{setname}_tables.jl")
+    tables_filename = os.path.join(dataset, f"{setname}_tables.jl")
     with open(tables_filename, encoding="utf8", mode="r") as tables_file:
         tables = [json.loads(line) for line in tables_file]
     return tables
 
 
 def load_refs(dataset, setname):
-    refs_filename =os.path.join("data", dataset, f"{setname}_output.txt")
+    refs_filename =os.path.join(dataset, f"{setname}_output.txt")
     with open(refs_filename, encoding="utf8", mode="r") as refs_file:
-        refs = [[line.strip().split(" ")]
+        refs = [line.strip().split(" ")
                 for line in refs_file if line.strip()]
     return refs
 
@@ -55,15 +56,13 @@ def serialize_stats(tv, rnc, rnw):
 
 def main(dataset):
     references = load_refs(dataset, setname='train')
-    tables = load_refs(dataset, setname='train')
-    
+    tables = load_tables(dataset, setname='train')
+
     if dataset == 'wikibio':
-        TABLE_VALUES = [{tok for _, value in table.items() for tok in value} for table in tables]
+        TABLE_VALUES = [{tok for _, value in table for tok in value} for table in tables]
     else:
         TABLE_VALUES = [{tok for head, _, tail in table for tok in head + tail} for table in tables]
-    
 
-            
     REF_NGRAM_COUNTS = [{order: ngram_counts(ref, order)
                          for order in range(1, 5)} 
                         for ref in references]
