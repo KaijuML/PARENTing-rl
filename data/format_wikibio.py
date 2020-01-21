@@ -204,7 +204,7 @@ def create_tables(folder):
                 alllabs.append(labs)
                 
             tables = list()
-            for idx, (labs, vals) in enumerate(zip(allvals, alllabs)):
+            for idx, (vals, labs) in enumerate(zip(allvals, alllabs)):
                 table = list()
                 for key, group in itertools.groupby(labs):
                     size = len([_ for _ in group])
