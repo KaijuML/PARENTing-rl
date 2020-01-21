@@ -54,7 +54,7 @@ class DecodeStrategy(object):
         done (bool): See above.
     """
 
-    def __init__(self, pad, bos, eos, batch_size, parallel_paths,
+    def __init__(self, pad, bos, eos, dot, batch_size, parallel_paths,
                  min_length, block_ngram_repeat, exclusion_tokens,
                  return_attention, max_length):
 
@@ -62,6 +62,7 @@ class DecodeStrategy(object):
         self.pad = pad
         self.bos = bos
         self.eos = eos
+        self.dot = dot
 
         self.batch_size = batch_size
         self.parallel_paths = parallel_paths
@@ -102,10 +103,23 @@ class DecodeStrategy(object):
 
     def __len__(self):
         return self.alive_seq.shape[1]
-
+            
     def ensure_min_length(self, log_probs):
+        """
+        We set the proba of generating <eos> to 0 if the sequence 
+        is not long enough.
+        We make sure that the sequence cannot end until the last
+        token generated is self.dot.
+        
+        we get the idx of all rows where the last token is not self.dot
+        we set self.eos to -1e20 for those idx
+        """
         if len(self) <= self.min_length:
-            log_probs[:, self.eos] = -1e20
+            log_probs[:, self.eos] = -1e20        
+        
+        if self.dot is not None:
+            idx = self.alive_seq[:, -1].ne(self.dot).nonzero().squeeze(1)
+            log_probs[idx, self.eos] = -1e20
 
     def ensure_max_length(self):
         # add one to account for BOS. Don't account for EOS because hitting

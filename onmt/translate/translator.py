@@ -139,6 +139,7 @@ class Translator(object):
         self._tgt_pad_idx = self._tgt_vocab.stoi[tgt_field.pad_token]
         self._tgt_bos_idx = self._tgt_vocab.stoi[tgt_field.init_token]
         self._tgt_unk_idx = self._tgt_vocab.stoi[tgt_field.unk_token]
+        self._tgt_dot_idx = self._tgt_vocab.stoi['.']  # custom rule
         self._tgt_vocab_len = len(self._tgt_vocab)
 
         self._gpu = gpu
@@ -535,6 +536,7 @@ class Translator(object):
                     pad=self._tgt_pad_idx,
                     bos=self._tgt_bos_idx,
                     eos=self._tgt_eos_idx,
+                    dot=self._tgt_dot_idx,
                     n_best=self.n_best,
                     global_scorer=self.global_scorer,
                     min_length=self.min_length, max_length=self.max_length,

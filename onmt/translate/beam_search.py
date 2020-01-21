@@ -55,12 +55,12 @@ class BeamSearch(DecodeStrategy):
             of score (float), sequence (long), and attention (float or None).
     """
 
-    def __init__(self, beam_size, batch_size, pad, bos, eos, n_best,
+    def __init__(self, beam_size, batch_size, pad, bos, eos, dot, n_best,
                  global_scorer, min_length, max_length, return_attention,
                  block_ngram_repeat, exclusion_tokens,
                  stepwise_penalty, ratio):
         super(BeamSearch, self).__init__(
-            pad, bos, eos, batch_size, beam_size, min_length,
+            pad, bos, eos, dot, batch_size, beam_size, min_length,
             block_ngram_repeat, exclusion_tokens, return_attention,
             max_length)
         # beam parameters
