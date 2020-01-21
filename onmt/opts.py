@@ -546,6 +546,26 @@ def train_opts(parser):
               help="Use a custom decay rate.")
     group.add('--warmup_steps', '-warmup_steps', type=int, default=4000,
               help="Number of warmup steps for custom decay.")
+    
+    
+    # Training with RL (see paper from Rebuffel et. al)
+    group = parser.add_argument_group('Self Critical Reinforcement Learning')
+    group.add('--train_with_rl', '-train_with_rl', action="store_true",
+             help="activate if you want to train a model with RL")
+    group.add('--TABLE_VALUES', '-TABLE_VALUES',
+              help="path to the precomputed stats REF_NGRAM_COUNTS")
+    group.add('--REF_NGRAM_COUNTS', '-REF_NGRAM_COUNTS',
+              help="path to the precomputed stats REF_NGRAM_COUNTS")
+    group.add('--REF_NGRAM_WEIGHTS', '-REF_NGRAM_WEIGHTS',
+              help="path to the precomputed stats REF_NGRAM_WEIGHTS")
+    group.add('--references', '-references',
+              help="path to the training references")
+    group.add('--rl_gamma_loss', '-rl_gamma_loss', type=float, default=.99
+              help="proportion of RL to use. ' \
+              'Will use 1 - rl_gamma_loss of teacher forcing")
+    group.add('--rl_metric', '-rl_metric',
+              default="parent", choices=['parent'],
+              help="The metric to use for RL")
 
     group = parser.add_argument_group('Logging')
     group.add('--report_every', '-report_every', type=int, default=50,

@@ -1,4 +1,4 @@
-"""
+)"""
     This is the loadable seq2seq trainer library that is
     in charge of training details, loss compute, and statistics.
     See train.py for a use case of this library.
@@ -14,6 +14,7 @@ import traceback
 
 import onmt.utils
 from onmt.utils.logging import logger
+from onmt.metrics import PARENTLossCompute
 
 
 def build_trainer(opt, device_id, model, fields, optim, model_saver=None):
@@ -57,20 +58,50 @@ def build_trainer(opt, device_id, model, fields, optim, model_saver=None):
         opt.early_stopping, scorers=onmt.utils.scorers_from_opts(opt)) \
         if opt.early_stopping > 0 else None
 
-    report_manager = onmt.utils.build_report_manager(opt, gpu_rank)
-    trainer = onmt.Trainer(model, train_loss, valid_loss, optim, trunc_size,
-                           shard_size, norm_method,
-                           accum_count, accum_steps,
-                           n_gpu, gpu_rank,
-                           gpu_verbose_level, report_manager,
-                           with_align=True if opt.lambda_align > 0 else False,
-                           model_saver=model_saver if gpu_rank == 0 else None,
-                           average_decay=average_decay,
-                           average_every=average_every,
-                           model_dtype=opt.model_dtype,
-                           earlystopper=earlystopper,
-                           dropout=dropout,
-                           dropout_steps=dropout_steps)
+    if opt.train_with_rl:
+        if shard_size != 0:
+            raise ValueError('No shard size for RL training!')
+        report_manager = onmt.rl_trainer.RLReportManager(opt.report_every, -1)
+        
+        # building loss compute here for now
+        # Also, there is no choice for the metric. But I still built the archecture
+        # to provide choice is already there !
+        if opt.rl_metric == "parent":
+            rl_loss = PARENTLossCompute(tgt_field, opt.TABLE_VALUES,
+                                        opt.REF_NGRAM_COUNTS, 
+                                        opt.REF_NGRAM_WEIGHTS,
+                                        opt.references)
+        else:
+            raise ValueError(f'Unknown RL metric: {rl_metric}')
+            
+        # For logging purposes
+        onmt.rl_trainer.RLStatistics.LOSS_NAME = opt.rl_metric
+        return onmt.RLTrainer(
+            model=model, fields=fields, ml_loss=train_loss, rl_loss=rl_loss,
+            optim=optim, trunc_size=trunc_size, gamma_loss=opt.rl_gamma_loss,
+            norm_method=norm_method, accum_count=accum_count, 
+            accum_steps=accum_steps, n_gpu=n_gpu, gpu_rank=gpu_rank,
+            gpu_verbose_level=gpu_verbose_level, report_manager=report_manager,
+            model_saver=model_saver if gpu_rank == 0 else None, 
+            average_decay=average_decay, average_every=average_every,
+            model_dtype=opt.model_dtype, earlystopper=earlystopper,
+            dropout=dropout, dropout_steps=dropout_steps)
+    
+    else: 
+        report_manager = onmt.utils.build_report_manager(opt)
+        trainer = onmt.Trainer(model, train_loss, valid_loss, optim, trunc_size,
+                               shard_size, norm_method,
+                               accum_count, accum_steps,
+                               n_gpu, gpu_rank,
+                               gpu_verbose_level, report_manager,
+                               with_align=True if opt.lambda_align > 0 else False,
+                               model_saver=model_saver if gpu_rank == 0 else None,
+                               average_decay=average_decay,
+                               average_every=average_every,
+                               model_dtype=opt.model_dtype,
+                               earlystopper=earlystopper,
+                               dropout=dropout,
+                               dropout_steps=dropout_steps)
     return trainer
 
 
