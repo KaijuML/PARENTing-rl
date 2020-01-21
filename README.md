@@ -86,7 +86,7 @@ To train a model within the PARENTing framework, you first need to pretain the m
 
 To PARENT a model within our RL framework, you can run:
 
-`python train.py --config train_wikibio.cfg`
+`python train.py --config train_wikibio_sarnn_rl.cfg`
 
 To (pre)train with different parameters than the one used in the paper, please refer to my comments in the config file, or check OpenNMT [train doc](http://opennmt.net/OpenNMT-py/options/train.html).
 
