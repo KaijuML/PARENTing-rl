@@ -79,6 +79,7 @@ if __name__ == "__main__":
         }
         
         print(res)
+        res_content[fname] = res
         
         # We dump the dict each time to be more robust against interruption
         with open(res_filename, mode="w", encoding="utf8") as resfile:
