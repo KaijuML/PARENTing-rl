@@ -1,4 +1,4 @@
-)"""
+"""
     This is the loadable seq2seq trainer library that is
     in charge of training details, loss compute, and statistics.
     See train.py for a use case of this library.

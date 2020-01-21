@@ -560,7 +560,7 @@ def train_opts(parser):
               help="path to the precomputed stats REF_NGRAM_WEIGHTS")
     group.add('--references', '-references',
               help="path to the training references")
-    group.add('--rl_gamma_loss', '-rl_gamma_loss', type=float, default=.99
+    group.add('--rl_gamma_loss', '-rl_gamma_loss', type=float, default=.99,
               help="proportion of RL to use. ' \
               'Will use 1 - rl_gamma_loss of teacher forcing")
     group.add('--rl_metric', '-rl_metric',
