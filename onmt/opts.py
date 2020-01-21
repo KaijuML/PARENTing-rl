@@ -553,7 +553,7 @@ def train_opts(parser):
     group.add('--train_with_rl', '-train_with_rl', action="store_true",
              help="activate if you want to train a model with RL")
     group.add('--TABLE_VALUES', '-TABLE_VALUES',
-              help="path to the precomputed stats REF_NGRAM_COUNTS")
+              help="path to the precomputed stats TABLE_VALUES")
     group.add('--REF_NGRAM_COUNTS', '-REF_NGRAM_COUNTS',
               help="path to the precomputed stats REF_NGRAM_COUNTS")
     group.add('--REF_NGRAM_WEIGHTS', '-REF_NGRAM_WEIGHTS',
