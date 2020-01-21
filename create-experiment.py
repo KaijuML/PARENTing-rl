@@ -11,7 +11,8 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
-    folder = pkg_resources.resource_filename(__name__, 'experiments', args.dataset)
+    folder = os.path.join('experiments', args.dataset)
+    folder = pkg_resources.resource_filename(__name__, folder)
     
     if not os.path.exists(folder):
         print(f"Creating a folder 'experiments/{args.dataset}' where all experiments will be stored.")
