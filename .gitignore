@@ -1,5 +1,6 @@
 experiments/
 data/wikibio/
+results/
 
 # Under this line, all items come from github default gitignore
 
