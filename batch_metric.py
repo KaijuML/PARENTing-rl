@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--dataset', '-d', dest='dataset', default='wikibio',
                         choices=['wikibio', 'webnlg'])
     parser.add_argument('--setname', dest='setname', default='test',
-                        choices=['test', 'dev'])
+                        choices=['test', 'valid'])
     parser.add_argument('--experiment', '-e', dest='experiment', 
                         default='pretraining-sarnn')
     parser.add_argument('--recompute', dest='recompute', action='store_true',
