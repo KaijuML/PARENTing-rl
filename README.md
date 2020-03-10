@@ -35,8 +35,8 @@ Once datasets are downloaded and formated, your repository should look like this
 Before any code run, we build experiment folders to keep things contained
 
 ```
-python create-experiment.py --dataset --name pretraining-sarnn
-python create-experiment.py --dataset --name sarnn-rl
+python create-experiment.py --dataset wikibio --name pretraining-sarnn
+python create-experiment.py --dataset wikibio --name sarnn-rl
 ```
 
 At this stage, your repository should look like this:
