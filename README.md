@@ -96,7 +96,7 @@ This config files run the training for 100 000 steps, however we manually stop t
 
 (Please note that all pretraining/training config files refer to data preprocessed by onmt and placed in the wikibio/pretraining_lstm experiment. This is to reduce redunduncies because the preprocessing step is the same for all models.)
 
-# Translating [WIP]
+# Translating
 
 You can simply translate the test input by running:
 
@@ -104,9 +104,9 @@ You can simply translate the test input by running:
 
 If you wish to make multiple translate in a row (for exemple to find the best performing checkpoint) you can you the `batch_translate.py` helper:
 
-`python batch_translate --config translate.cfg --dataset wikibio --setname test --bsz 64 --bms 10 --blk 0 --gpu 1`
+`python batch_translate --config translate.cfg --dataset wikibio --setname valid --bsz 64 --bms 10`
 
-# Evaluation [WIP]
+# Evaluation
 
 To compute PARENT scores,  you can follow  `parent/README.md` for instructions on how to compute PARENT scores, either in command line or in a notebook for better visualization. Note that while working on this project, I used the `parent.py` file at the root of this repo. Since then, I have released a stand alone PARENT repository, which I have included in this one.
 
