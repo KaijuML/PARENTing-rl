@@ -1,12 +1,12 @@
 # PARENTing-rl
 
-Code for PARENTing via Model-Agnostic Reinforcement Learning to Correct Pathological Behaviors in Data-to-Text Generation (Rebuffel, Soulier, Scoutheeten, Gallirani; ACL2020); most of this code is based on [OpenNMT](https://github.com/OpenNMT/OpenNMT-py).
+Code for PARENTing via Model-Agnostic Reinforcement Learning to Correct Pathological Behaviors in Data-to-Text Generation (Rebuffel, Soulier, Scoutheeten, Gallirani; INLG2020); most of this code is based on [OpenNMT](https://github.com/OpenNMT/OpenNMT-py).
 
 You will need a recent python (3.6+) to use it as is, especially OpenNMT.
 
 Beyond standard packages included in miniconda, usefull packages are torch==1.1.0 torchtext==0.4 and some others required to make onmt work (PyYAML and configargparse for example).
 
-In the following, only instructions for WikiBIO are given. However, most of the time, changing "wikibio" to "webnlg" in the given command will work. Where instructions differ, I'll give both commands. In the paper we report experiments on several model. Here we give instructions for Structure-Aware seq2seq (our own implementation in pytorhc) from [this great repo](https://github.com/tyliupku/wiki2bio/blob/master/preprocess.py). Modifying instructions to work with others models is intuitive.
+In the following, only instructions for WikiBIO are given. However, most of the time, changing "wikibio" to "webnlg" in the given command will work. Where instructions differ, I'll give both commands. In the paper we report experiments on several model. Here we give instructions for LSTM+RL. Modifying instructions to work with others models is intuitive.
 
 # Datasets
 
@@ -35,8 +35,8 @@ Once datasets are downloaded and formated, your repository should look like this
 Before any code run, we build experiment folders to keep things contained
 
 ```
-python create-experiment.py --dataset wikibio --name pretraining-sarnn
-python create-experiment.py --dataset wikibio --name sarnn-rl
+python create-experiment.py --dataset wikibio --name pretraining-lstm
+python create-experiment.py --dataset wikibio --name lstm-rl
 ```
 
 At this stage, your repository should look like this:
@@ -46,7 +46,7 @@ At this stage, your repository should look like this:
 ├── onmt/		             	# Most of the heavy-lifting is done by onmt
 ├── experiments/ 	           	# Experiments are stored here
 │	└── wikibio/
-│	│   └── pretraining-sarnn/
+│	│   └── pretraining-lstm/
 │	│	│	├── data/
 |	│	│	├── gens/
 │	│	│	└── models/
@@ -66,7 +66,7 @@ At this stage, your repository should look like this:
 ├── onmt		             	# Most of the heavy-lifting is done by onmt
 ├── experiments 	           	# Experiments are stored here
 │	└── wikibio/
-│	│   └── pretraining-sarnn/
+│	│   └── pretraining-lstm/
 │	│	│	├── data/
 │	│	│	│	├── data.train.0.pt
 │	│	│	│	├── data.valid.0.pt
@@ -82,17 +82,19 @@ At this stage, your repository should look like this:
 
 To train a model within the PARENTing framework, you first need to pretain the model:
 
-`python train.py --config pretrain_wikibio_sarnn.cfg`
+`python train.py --config pretrain_wikibio_lstm.cfg`
 
 To PARENT a model within our RL framework, you can run:
 
-`python train.py --config train_wikibio_sarnn_rl.cfg`
+`python train.py --config train_wikibio_lstm_rl.cfg`
 
 To (pre)train with different parameters than the one used in the paper, please refer to my comments in the config file, or check OpenNMT [train doc](http://opennmt.net/OpenNMT-py/options/train.html).
 
+In particular, when further training a model via RL, you can select the best checkpoint from pretraining with `--train_from <path_to_cp>`. You can also experiment with a different weighting of MLE / RL losses, using `--rl_gamma_loss` (see paper for details).
+
 This config files run the training for 100 000 steps, however we manually stop the training before, depending on performance on development set.
 
-Please not that all pretraining/training config file refer to data preprocessed by onmt and place in wikibio/pretraining_sarrn experiemnt. This is to reduce redunduncies because the preprocessing step is the same for all models. 
+(Please note that all pretraining/training config files refer to data preprocessed by onmt and placed in the wikibio/pretraining_lstm experiment. This is to reduce redunduncies because the preprocessing step is the same for all models.)
 
 # Translating [WIP]
 
