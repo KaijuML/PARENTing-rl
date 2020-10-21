@@ -108,3 +108,57 @@ If you wish to make multiple translate in a row (for exemple to find the best pe
 
 # Evaluation [WIP]
 
+To compute PARENT scores,  you can follow  `parent/README.md` for instructions on how to compute PARENT scores, either in command line or in a notebook for better visualization. Note that while working on this project, I used the `parent.py` file at the root of this repo. Since then, I have released a stand alone PARENT repository, which I have included in this one.
+
+You can evaluate the BLEU score using [SacreBLEU](https://github.com/mjpost/sacreBLEU) from [Post, 2018](aclweb.org/anthology/W18-6319). See the repo for installation, it should be a breeze with pip.
+
+You can get the BLEU score by running:
+
+`cat experiments/wikibio/pretraining-lstm/gens/test/predictions.txt | sacrebleu --force data/wikibio/test_output.txt`
+
+(Note that --force is not required as it doesn't change the score computation, it just suppresses a warning because this dataset is always tokenized which is not good practice in general due to different tokenization habits from different researchers, but we have no choice here because wikibio ships already tokenized.)
+
+Alternatively you can use any prefered method for BLEU computation. I have also checked scoring models with [NLTK](aclweb.org/anthology/W18-6319) and scores were virtually the same.
+
+An example script to compute PARENT and BLEU (using NLTK):
+
+```python
+from nltk.translate.bleu_score import corpus_bleu
+from parent.parent import parent as corpus_parent
+import numpy as np
+import json, os
+
+with open('data/wikibio/test_tables.jl', mode="r", encoding='utf8') as f:
+    tables = [json.loads(line) for line in f if line.strip()]
+
+with open('data/wikibio/test_output.txt', mode="r", encoding='utf8') as f:
+    references = [line.strip().split() for line in f if line.strip()]
+
+len(tables) == len(references)
+
+experiment_folder = 'experiments/wikibio/pretraining-lstm/gens/test/'
+
+res = dict()
+for filename in os.listdir(experiment_folder):
+
+    with open(os.path.join(experiment_folder, filename), mode="r", encoding='utf8') as f:
+        predictions = [line.strip().split() for line in f if line.strip()]
+
+    assert len(tables) == len(references) == len(predictions)
+    
+    p, r, f = corpus_parent(predictions, references, tables)
+    b = corpus_bleu([[r] for r in references], predictions)
+    res[filename] = {
+        'parent': (p, r, f),
+        'bleu': b
+    }
+    
+with open("scores.json") as f:
+    json.dump(res, f)
+    
+for name, scores in res.items():
+    print(name)
+    print(f"\tPARENT (Prec, Rec, F1): {', '.join(map(str, [np.round(100*s, 2) for s in scores['parent']]))}")
+    print(f"\tBLEU - - - - - - - - -: {np.round(100*scores['bleu'], 2)}")
+    print()
+```

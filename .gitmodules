@@ -1,0 +1,3 @@
+[submodule "parent"]
+	path = parent
+	url = git@github.com:KaijuML/parent.git
