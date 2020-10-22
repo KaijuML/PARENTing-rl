@@ -1,6 +1,6 @@
 # PARENTing-rl
 
-Code for PARENTing via Model-Agnostic Reinforcement Learning to Correct Pathological Behaviors in Data-to-Text Generation (Rebuffel, Soulier, Scoutheeten, Gallirani; INLG2020); most of this code is based on [OpenNMT](https://github.com/OpenNMT/OpenNMT-py).
+Code for [PARENTing via Model-Agnostic Reinforcement Learning to Correct Pathological Behaviors in Data-to-Text Generation (Rebuffel, Soulier, Scoutheeten, Gallirani; INLG2020)](https://arxiv.org/abs/2010.10866); most of this code is based on [OpenNMT](https://github.com/OpenNMT/OpenNMT-py).
 
 You will need a recent python (3.6+) to use it as is, especially OpenNMT.
 
